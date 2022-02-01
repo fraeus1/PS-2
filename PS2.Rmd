@@ -1,0 +1,41 @@
+---
+title: "Problem Set 2"
+author: "Neeharika , Francesca, Giacomo, Kun and Noor"
+date: "01/02/2022"
+output: pdf_document
+---
+
+```{r}
+library(readxl)
+data<- read_excel("~/Desktop/PS 2 -METRICS/problem_set_2.xls")
+View(data)
+summary(data)
+names(data)
+library(stargazer)
+reg1<- lm(logearn~ age+yob+schooling, data = data)
+summary(reg1)
+reg2<-lm(logearn ~ age^2+yob^2+schooling, data = data)
+summary(reg2)
+reg3<-lm(logearn ~ age^3+yob^3+schooling, data = data)
+summary(reg3)
+reg4<-lm(logearn ~ age^4+yob^4+schooling, data = data)
+summary(reg4)
+reg5<-lm(logearn~age^2*yob^2+schooling, data = data)
+summary(reg5)
+```
+```{r}
+data$LAW <- ifelse (data$yob >= 33, 1, 0)
+reg6<- lm(schooling ~ LAW, data = data)
+summary(reg6)
+reg7<- lm(logearn ~ LAW, data = data )
+summary(reg7)
+0.161749 /0.99034
+#0.1633267
+library(tidyverse)
+library(ivreg)
+ivreg(logearn~schooling|LAW, data = data)
+#0.1633 
+```
+
+```
+
