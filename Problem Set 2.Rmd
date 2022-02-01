@@ -5,26 +5,21 @@ date: "01/02/2022"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+data<- read_excel("~/Desktop/PHD/Econometrics/Sem 2/Problem Set 2/problem_set_2.xls")
+View(data)
+summary(data)
+names(data)
+install.packages("stargazer")
+reg1<- lm(logearn~ age+yob+schooling, data = data)
+summary(reg1)
+reg2<-lm(logearn ~ age^2+yob^2+schooling, data = data)
+summary(reg2)
+reg3<-lm(logearn ~ age^3+yob^3+schooling, data = data)
+summary(reg3)
+reg4<-lm(logearn ~ age^4+yob^4+schooling, data = data)
+summary(reg4)
+reg5<-lm(logearn~age^2*yob^2+schooling, data = data)
+summary(reg5)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
