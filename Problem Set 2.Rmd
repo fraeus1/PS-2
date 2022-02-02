@@ -35,13 +35,14 @@ data$LAW<-ifelse(data$yob>= 33,1,0)
 View(data)
 install.packages("binsreg")
 library(binsreg)
-binsreg(data$logearn, data$yob, data = data, w = NULL, dotsgrid = T, line = TRUE )
+binsreg(data$schooling, data$yob, data = data, w = NULL, deriv = 0, dotsgrid = T, line = TRUE, cigridmean=T)
 library(ggplot2)
+
 library(tidyverse)
 summary(data$yob)
 plot(schooling~yob , data=data,
    xlab="Schooling", ylab="Earnings",
-   main="Enhanced Scatter Plot")
+   main="Scatter Plot", pch = 11)
 ```
 ```{r}
 data$LAW <- ifelse (data$yob >= 33, 1, 0)
