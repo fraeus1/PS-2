@@ -6,20 +6,55 @@ output: pdf_document
 ---
 
 ```{r}
+install.packages("readxl")
+library(readxl)
 data<- read_excel("~/Desktop/PHD/Econometrics/Sem 2/Problem Set 2/problem_set_2.xls")
 View(data)
 summary(data)
 names(data)
 install.packages("stargazer")
+library(stargazer)
 reg1<- lm(logearn~ age+yob+schooling, data = data)
-summary(reg1)
+stargazer(reg1)
 reg2<-lm(logearn ~ age^2+yob^2+schooling, data = data)
 summary(reg2)
+```
+
+
+```{r}
 reg3<-lm(logearn ~ age^3+yob^3+schooling, data = data)
 summary(reg3)
 reg4<-lm(logearn ~ age^4+yob^4+schooling, data = data)
-summary(reg4)
+stargazer(reg4)
 reg5<-lm(logearn~age^2*yob^2+schooling, data = data)
 summary(reg5)
 ```
 
+```{r}
+data$LAW<-ifelse(data$yob>= 33,1,0)
+View(data)
+install.packages("binsreg")
+library(binsreg)
+binsreg(data$logearn, data$yob, data = data, w = NULL, dotsgrid = T, line = TRUE )
+library(ggplot2)
+library(tidyverse)
+summary(data$yob)
+plot(schooling~yob , data=data,
+   xlab="Schooling", ylab="Earnings",
+   main="Enhanced Scatter Plot")
+```
+```{r}
+data$LAW <- ifelse (data$yob >= 33, 1, 0)
+reg6<- lm(schooling ~ LAW, data = data)
+stargazer(reg6)
+reg7<- lm(logearn ~ LAW, data = data )
+stargazer(reg7)
+0.161749 /0.99034
+#0.1633267
+library(tidyverse)
+install.packages("ivreg")
+library(ivreg)
+a<-ivreg(logearn~schooling|LAW, data = data)
+stargazer(a)
+```
+plot(data$yob, data$schooling , xlab = "Schooling", ylab = "Year of Birth", main = "Binscatter", pch = 15)
