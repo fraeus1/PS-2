@@ -14,36 +14,21 @@ summary(data)
 names(data)
 install.packages("stargazer")
 library(stargazer)
-reg1<- lm(logearn~ age+yob+schooling, data = data)
+data$age_sq<-data$age^2
+data$age_cube<-data$age^3
+data$age_4<-data$age^4
+data$yob_sq<-data$yob^2
+data$yob_cube<-data$yob^3
+data$yob_4<-data$yob^4
+reg1 <- lm(logearn~schooling+age+age_sq+age_cube+age_4+yob+yob_sq+yob_cube+yob_4, data = data)
+summary(reg1)
 stargazer(reg1)
-reg2<-lm(logearn ~ age^2+yob^2+schooling, data = data)
-summary(reg2)
+abline(reg1, col = "blue")
+plot(reg1)
+
 ```
 
 
-```{r}
-reg3<-lm(logearn ~ age^3+yob^3+schooling, data = data)
-summary(reg3)
-reg4<-lm(logearn ~ age^4+yob^4+schooling, data = data)
-stargazer(reg4)
-reg5<-lm(logearn~age^2*yob^2+schooling, data = data)
-summary(reg5)
-```
-
-```{r}
-data$LAW<-ifelse(data$yob>= 33,1,0)
-View(data)
-install.packages("binsreg")
-library(binsreg)
-binsreg(data$schooling, data$yob, data = data, w = NULL, deriv = 0, dotsgrid = T, line = TRUE, cigridmean=T)
-library(ggplot2)
-
-library(tidyverse)
-summary(data$yob)
-plot(schooling~yob , data=data,
-   xlab="Schooling", ylab="Earnings",
-   main="Scatter Plot", pch = 11)
-```
 ```{r}
 data$LAW <- ifelse (data$yob >= 33, 1, 0)
 reg6<- lm(schooling ~ LAW, data = data)
@@ -58,4 +43,17 @@ library(ivreg)
 a<-ivreg(logearn~schooling|LAW, data = data)
 stargazer(a)
 ```
-plot(data$yob, data$schooling , xlab = "Schooling", ylab = "Year of Birth", main = "Binscatter", pch = 15)
+```{r}
+data$leave<-ifelse(data$schooling < 15,1,0) #if someone left school before 15 = 1 and 0 otherwise
+View(data)
+table
+leave_tab<-table(data$leave)
+leave_tab
+prop.table(leave_tab)#proportion table
+data$prob<-table(data$leave , data$yob)[,1]/table(data$yob)[,1]
+#install.packages("tidyverse")
+#install.packages("ggplot2")
+#ggplot(data = data, aes(data$schooling, data$yob), geo)
+
+```
+
