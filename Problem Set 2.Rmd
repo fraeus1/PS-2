@@ -51,22 +51,25 @@ leave_tab<-table(data$leave)
 leave_tab
 prop.table(leave_tab)#proportion table
 data$prob<-with(data, ave(leave,yob))
-#install.packages("tidyverse")
-#install.packages("ggplot2")
-#ggplot(data = data, aes(data$schooling, data$yob), geo)
+
+```
+
+
+```{r}
 plot1<-plot(data$yob, data$prob, vline(col="blue"))
 install.packages("ggplot2")
 library(ggplot2)
 ggplot(data = data, 
        mapping = aes(x = yob, 
                      y = prob))+
-  geom_point(size = 1) + labs(title = "Probability of a person leaving school before 15 against the year of birth")
-
+  geom_point(size = 1, colour = "darkgreen") + labs(title = "Probability of a person leaving school before 15 against the year of birth")+
+  geom_vline(xintercept = 33, colour = "red", labels(object = "yob = 33"))
 ```
 ```{r}
 ggplot(data = data, mapping = aes(x = yob, 
                                   y = schooling))+
-  geom_point(size = 1) + labs(title = "Binscatter : Schooling and Year of Birth")
+  geom_point(size = 1) + labs(title = "Binscatter : Schooling and Year of Birth") +
+    geom_vline(xintercept = 33, colour = "red")
 ```
 ```{r}
 ggplot(data = data, 
@@ -74,7 +77,8 @@ ggplot(data = data,
                      y = logearn)) +
   geom_point(size = 2, colour = "dark blue") +labs(title = "Binscatter : Schooling and Year of Birth",
                                                   xlab = "Year of Birth",
-                                                  ylab = "Log Earnings")
+                                                  ylab = "Log Earnings") +
+    geom_vline(xintercept = 33, colour = "red")
 
 ```
 
