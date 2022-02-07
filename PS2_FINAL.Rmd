@@ -1,0 +1,69 @@
+---
+title: "Problem Set 2_FINAL"
+author: "Neeharika , Francesca, Giacomo, Kun and Noor"
+date: "01/02/2022"
+output: pdf_document
+---
+
+library(readxl)
+data<- read_excel("~/Desktop/PS 2 -METRICS/problem_set_2.xls")
+install.packages("stargazer")
+library(stargazer)
+#adding the 4th order polynomials into the data
+data$age_sq<-data$age^2
+data$age_cube<-data$age^3
+data$age_4<-data$age^4
+data$yob_sq<-data$yob^2
+data$yob_cube<-data$yob^3
+data$yob_4<-data$yob^4
+#running the simple OLS of the 4th order polynomial
+reg1 <- glm(logearn~schooling+age+age_sq+age_cube+age_4+yob+yob_sq+yob_cube+yob_4, data = data)
+summary(reg1)
+stargazer(reg1)
+
+#creating a dummy for instrument
+data$LAW <- ifelse (data$yob >= 33, 1, 0)
+reg6<- lm(schooling ~ LAW, data = data)
+stargazer(reg6)
+reg7<- lm(logearn ~ LAW, data = data )
+stargazer(reg7)
+0.161749 /0.99034
+#0.1633267
+library(tidyverse)
+install.packages("ivreg")
+library(ivreg)
+a<-ivreg(logearn~schooling|LAW, data = data)
+stargazer(a)
+
+#to obtain the probability of someone leaving before the year 15
+data$leave<-ifelse(data$schooling < 15,1,0) #if someone left school before 15 = 1 and 0 otherwise
+leave_tab<-table(data$leave)
+leave_tab
+#to get probability
+prop.table(leave_tab)#proportion table
+#probability for each individual if LEAVE ==1  for each year
+data$prob<-with(data, ave(leave,yob))
+
+names(data)[3] <- "Year_of_Birth"
+names(data)[5] <- "Schooling"
+names(data)[14] <- "Probability"
+install.packages("binsreg")
+library(binsreg)
+binscatter1<-binsreg(data$Schooling, data$Year_of_Birth)
+binscatter1$bins_plot + geom_vline (xintercept = 33, colour = "red" ) + xlab("Year of Birth") + ylab("Schooling")
+  ggtitle("Binscatter of Schooling vs Year of Birth") + 
+  theme(plot.title = element_text(hjust = 0.3, vjust = 0.3, face = 'italic')) +
+  theme(element_line(margin(t = 3, r = 3, b = 3, l = 3, unit = "pt")))
+binscatter2<-binsreg(data$Probability, data$Year_of_Birth)
+binscatter2$bins_plot + geom_vline(xintercept = 33, colour = "darkgreen") +  xlab("Year of Birth") + 
+  ylab("Probability")+
+  ggtitle("Binscatter : Probability vs Year of Birth") + 
+  theme(plot.title = element_text(hjust = 0.3 , vjust = 0.3, face = 'italic')) + 
+  theme(element_line(margin(t = 3, r = 3, b = 3, l = 3, unit = "pt")))  
+  
+binscatter3<-binsreg(data$logearn, data$Year_of_Birth)
+binscatter3$bins_plot + geom_vline(xintercept = 33, colour = "orange") + ggtitle("Binscatter : Log earnings vs Year of Birth") +
+  theme(plot.title = element_text(hjust = 0.3 , vjust = 0.3, face = 'italic')) + theme(plot.caption = element_text("Yob = 33")) +
+  theme(element_line(margin(t = 3, r = 3, b = 3, l = 3, unit = "pt"))) + 
+  xlab("Year of Birth") + 
+  ylab("Log Earnings")
